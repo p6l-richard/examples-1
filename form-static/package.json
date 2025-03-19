@@ -10,7 +10,8 @@
   },
   "scripts": {
     "start": "parcel",
-    "build": "parcel build"
+    "clean": "rm -rf dist",
+    "build": "yarn clean && parcel build --no-content-hash"
   },
   "dependencies": {
     "@parcel/rsc": "^2.14.0",

@@ -9,8 +9,8 @@ Create a self-contained widget that leverages React Server Components (RSC) for 
 ```
 dist/
 ├── Form.html          # Static markup + embedded RSC payload
-├── Form.[hash].js     # Client bundle with hydration
-└── Form.[hash].css    # Extracted styles
+├── Form.ec3c8d0b.js   # Client bundle with hydration (stable hash)
+└── Form.d5bfb115.css  # Extracted styles (stable hash)
 ```
 
 ## Target Output
@@ -31,18 +31,21 @@ src/
 ## Implementation Status
 
 ### ✅ Phase 1: Basic RSC Setup
+
 - Implemented server component entry point
 - Setup client component with hydration
 - Configured Parcel react-static target
 - Basic form structure with styles
 
 ### 🚧 Phase 2: Asset Optimization
-- [ ] Configure stable filenames (remove content hashes)
+
+- [x] Configure stable filenames (using --no-content-hash)
 - [ ] Setup public URL for assets
 - [ ] Test with GitHub Pages deployment
 - [ ] Verify Framer embedding
 
 ### 🔲 Phase 3: Framer Integration
+
 - [ ] Split output for Framer's security model:
   - HTML content (direct embed)
   - Head content (CSS)
@@ -51,6 +54,7 @@ src/
 - [ ] Verify asset loading from external domain
 
 ### 🔲 Phase 4: Production Ready
+
 - [ ] Optimize bundle size
 - [ ] Add error boundaries
 - [ ] Implement loading states
@@ -64,8 +68,8 @@ src/
 The RSC payload is embedded directly in the HTML output:
 
 ```html
-<link rel="stylesheet" href="/Form.[hash].css" data-precedence="default">
-<script src="/Form.[hash].js" type="module" async></script>
+<link rel="stylesheet" href="/Form.d5bfb115.css" data-precedence="default">
+<script src="/Form.ec3c8d0b.js" type="module" async></script>
 <div class="form-widget">
     <h1>Form Widget</h1>
     <div class="form-container"></div>
@@ -90,14 +94,14 @@ export function FormClient() {
 
 ## Next Steps
 
-1. Configure stable filenames in Parcel
-2. Setup public URL for assets
-3. Test with GitHub Pages
-4. Implement Framer embedding strategy
-5. Optimize for production
+1. ✅ Configure stable filenames in Parcel
+2. Setup GitHub Pages repository
+3. Configure public URL for assets
+4. Test GitHub Pages deployment
+5. Implement Framer embedding strategy
 
 ## Open Questions
 
-- How to handle asset versioning without content hashes?
 - Best strategy for hosting assets (GitHub Pages vs custom domain)
 - Security implications of external asset loading in Framer
+- Optimal way to version assets for production updates
