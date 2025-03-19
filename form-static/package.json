@@ -9,9 +9,8 @@
     }
   },
   "scripts": {
-    "clean": "rm -rf public",
-    "build": "yarn clean && parcel build --target react-static --no-content-hash --dist-dir public --public-url https://p6l-richard.github.io/examples-1/form-static/public",
-    "postbuild": "node scripts/split-output.js",
+    "clean": "rm -rf dist public",
+    "build": "yarn clean && parcel build --target react-static --no-content-hash --public-url https://p6l-richard.github.io/examples-1/form-static/public && node scripts/split-output.js",
     "start": "parcel"
   },
   "dependencies": {
