@@ -8,8 +8,9 @@ Create a self-contained widget that leverages React Server Components (RSC) for 
 
 ```
 dist/
-├── index.html     # Static markup + embedded RSC payload (4.4KB)
-└── pages.*.js     # Client bundle with React runtime & hydration
+├── Form.html          # Static markup + embedded RSC payload
+├── Form.[hash].js     # Client bundle with hydration
+└── Form.[hash].css    # Extracted styles
 ```
 
 ## Target Output
@@ -22,118 +23,81 @@ dist/
 
 ```
 src/
-├── components/
-│   ├── Form.tsx          # Server Component - Static markup
-│   ├── FormStep.tsx      # Client Component - Interactive form
-│   └── Chart.tsx         # Client Component - Lazy loaded visualization
-├── client.ts             # Hydration entry
-└── widget-entry.tsx      # Server entry
+├── Form.tsx           # Server Component - Static markup
+├── FormClient.tsx     # Client Component - Interactive form
+└── styles.css         # Widget styles
 ```
 
-## Implementation Phases
+## Implementation Status
 
-### Phase 1: Widget Entry Setup
+### ✅ Phase 1: Basic RSC Setup
+- Implemented server component entry point
+- Setup client component with hydration
+- Configured Parcel react-static target
+- Basic form structure with styles
 
-- Create minimal RSC server entry point
-- Remove page-related props/routing
-- Configure build for widget output
-- Setup basic hydration with embedded RSC payload
+### 🚧 Phase 2: Asset Optimization
+- [ ] Configure stable filenames (remove content hashes)
+- [ ] Setup public URL for assets
+- [ ] Test with GitHub Pages deployment
+- [ ] Verify Framer embedding
 
-### Phase 2: Form Component Structure
+### 🔲 Phase 3: Framer Integration
+- [ ] Split output for Framer's security model:
+  - HTML content (direct embed)
+  - Head content (CSS)
+  - Body scripts (JS + RSC payload)
+- [ ] Test hydration in Framer context
+- [ ] Verify asset loading from external domain
 
-- Implement static form markup as Server Component
-  - Optimized initial load
-  - No client-side dependencies
-- Interactive form logic as Client Component
-  - Form state management
-  - Step transitions
-  - Validation
-- Lazy loaded chart visualization
-  - Load on form completion
-  - Minimal initial bundle
-
-### Phase 3: Build Configuration
-
-- Configure Parcel for widget-specific output
-- Optimize bundle splitting
-  - Core hydration
-  - Form interactivity
-  - Chart visualization
-- Setup static generation pipeline
-- Remove unnecessary page routing/navigation
+### 🔲 Phase 4: Production Ready
+- [ ] Optimize bundle size
+- [ ] Add error boundaries
+- [ ] Implement loading states
+- [ ] Add form validation
+- [ ] Setup analytics
 
 ## Technical Details
 
 ### RSC Integration
 
-The RSC payload is embedded directly in the HTML output as `__FLIGHT_DATA`:
+The RSC payload is embedded directly in the HTML output:
 
 ```html
-<!-- Widget with embedded RSC payload -->
-<div id="form-widget">
-  <!-- Static HTML markup -->
-  <form class="form-container">...</form>
-  
-  <!-- Embedded RSC payload -->
-  <script>
-    (self.__FLIGHT_DATA||=[]).push("...");
-  </script>
+<link rel="stylesheet" href="/Form.[hash].css" data-precedence="default">
+<script src="/Form.[hash].js" type="module" async></script>
+<div class="form-widget">
+    <h1>Form Widget</h1>
+    <div class="form-container"></div>
 </div>
+<script>(self.__FLIGHT_DATA ||= []).push("...")</script>
 ```
 
 ### Hydration Setup
 
 ```typescript
-// client.ts
+// FormClient.tsx
+'use client'
 import { hydrate } from '@parcel/rsc/client'
 
-// Hydrate from embedded RSC payload
-const updateRoot = hydrate()
+// Initialize hydration at module level
+hydrate()
 
-// Initialize any client-side listeners
+export function FormClient() {
+  // Interactive form logic
+}
 ```
-
-### Build Process
-
-1. RSC generates static HTML with embedded payload at build time
-2. Client components are compiled into minimal JS bundle
-3. CSS is extracted and scoped
-4. Output includes:
-
-   ```
-   widget/
-   ├── widget.html    # Static markup + RSC payload
-   ├── widget.js      # Hydration + interactivity
-   └── widget.css     # Scoped styles
-   ```
-
-### Widget Embedding
-
-Final output will be embeddable via:
-
-```html
-<!-- Widget Styles -->
-<link rel="stylesheet" href="widget.css">
-
-<!-- Widget with embedded RSC -->
-<div id="form-widget">
-  <!-- Paste widget.html content here -->
-</div>
-
-<!-- Widget Hydration -->
-<script src="widget.js" async></script>
-```
-
-### Data Flow
-
-1. Initial load: Static HTML with embedded RSC payload
-2. Hydration: Restore interactivity using embedded payload
-3. Form completion: Lazy load chart
-4. Data submission: External handler (Hubspot)
 
 ## Next Steps
 
-1. Implement Phase 1
-2. Validate minimal RSC setup
-3. Proceed with form implementation
-4. Configure optimal build output
+1. Configure stable filenames in Parcel
+2. Setup public URL for assets
+3. Test with GitHub Pages
+4. Implement Framer embedding strategy
+5. Optimize for production
+
+## Open Questions
+
+- How to handle asset versioning without content hashes?
+- Best strategy for hosting assets (GitHub Pages vs custom domain)
+- Security implications of external asset loading in Framer
