@@ -2,36 +2,38 @@ const fs = require('fs');
 const path = require('path');
 
 // Read the Form.html file
-const htmlPath = path.join(__dirname, '../public/Form.html');
-let html = fs.readFileSync(htmlPath, 'utf8');
+const formHtml = fs.readFileSync(path.join(__dirname, '../public/Form.html'), 'utf8');
 
-// Extract and remove links
-const links = html.match(/<link[^>]*>/g) || [];
-links.forEach(link => {
-  html = html.replace(link, '');
-});
+// Extract and remove link tags
+const linkTags = formHtml.match(/<link[^>]*>/g) || [];
+const withoutLinks = formHtml.replace(/<link[^>]*>/g, '');
 
-// Extract and remove scripts
-const scripts = html.match(/<script[\s\S]*?<\/script>/g) || [];
-scripts.forEach(script => {
-  html = html.replace(script, '');
-});
+// Extract and remove script tags
+const scriptTags = formHtml.match(/<script[\s\S]*?<\/script>/g) || [];
 
-// Write the files
-fs.writeFileSync(
-  path.join(__dirname, '../public/head.html'),
-  links.join('\n')
-);
+// Keep track of script sources we've seen
+const seenSources = new Set();
+const uniqueScripts = scriptTags.filter(script => {
+  const srcMatch = script.match(/src="([^"]+)"/);
+  if (!srcMatch) return true; // Keep scripts without src
+  
+  const src = srcMatch[1];
+  // Fix the path if needed
+  const fixedScript = script.replace(/publicForm/, 'public/Form');
+  
+  // If we haven't seen this source before, keep it
+  if (!seenSources.has(src)) {
+    seenSources.add(src);
+    return true;
+  }
+  return false;
+}).map(script => script.replace(/publicForm/, 'public/Form'));
 
-fs.writeFileSync(
-  path.join(__dirname, '../public/body.html'),
-  scripts.join('\n')
-);
+const withoutScripts = withoutLinks.replace(/<script[\s\S]*?<\/script>/g, '');
 
-// Whatever remains is our form content
-fs.writeFileSync(
-  path.join(__dirname, '../public/Form.html'), 
-  html.trim()
-);
+// Write the output files
+fs.writeFileSync(path.join(__dirname, '../public/head.html'), linkTags.join('\n'));
+fs.writeFileSync(path.join(__dirname, '../public/body.html'), uniqueScripts.join('\n'));
+fs.writeFileSync(path.join(__dirname, '../public/Form.html'), withoutScripts);
 
 console.log('Successfully split output into head.html, body.html, and Form.html'); 
