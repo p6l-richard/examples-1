@@ -5,12 +5,13 @@
   "targets": {
     "react-static": {
       "source": "src/Form.tsx",
-      "context": "react-server"
+      "context": "react-server",
+      "distDir": "./public"
     }
   },
   "scripts": {
     "start": "parcel",
-    "clean": "rm -rf dist",
+    "clean": "rm -rf public",
     "build": "yarn clean && parcel build --no-content-hash"
   },
   "dependencies": {
