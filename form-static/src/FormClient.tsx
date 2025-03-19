@@ -12,8 +12,8 @@ export function FormClient() {
     email: ''
   })
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleNext = () => {
+    if (!formData.name || !formData.email) return
     setStep(2)
   }
 
@@ -45,7 +45,7 @@ export function FormClient() {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <div>
       <div>
         <label htmlFor="name">Name:</label>
         <input
@@ -66,7 +66,7 @@ export function FormClient() {
           required
         />
       </div>
-      <button type="submit">Next</button>
-    </form>
+      <button onClick={handleNext}>Next</button>
+    </div>
   )
 }
