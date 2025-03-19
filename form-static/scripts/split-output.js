@@ -13,16 +13,15 @@ fs.writeFileSync(
 
 // Extract parts using regex
 const headLinks = html.match(/<link[^>]*>/g) || [];
-const bodyScripts = html.match(/<script[\s\S]*?<\/script>/g) || [];
+
+// Extract scripts, ensuring we only get unique ones and fix URLs
+const scriptMatches = html.match(/<script[\s\S]*?<\/script>/g) || [];
+const flightDataScript = scriptMatches.find(script => script.includes('__FLIGHT_DATA')) || '';
+const moduleScript = `<script type="module" async src="https://p6l-richard.github.io/examples-1/form-static/public/Form.f4926498.js"></script>`;
 
 // Extract the form widget content with all its children
 const formMatch = html.match(/<div class="form-widget"[\s\S]*?<form[\s\S]*?<\/form>[\s\S]*?<\/div>[\s\S]*?<\/div>/);
 const divContent = formMatch ? formMatch[0] : '';
-
-// Fix script URLs
-const fixedBodyScripts = bodyScripts.map(script => 
-  script.replace(/publicForm/g, 'public/Form')
-);
 
 // Write head.html
 fs.writeFileSync(
@@ -30,10 +29,10 @@ fs.writeFileSync(
   headLinks.join('\n')
 );
 
-// Write body.html
+// Write body.html with only necessary scripts
 fs.writeFileSync(
   path.join(__dirname, '../public/body.html'),
-  fixedBodyScripts.join('\n')
+  moduleScript + '\n' + flightDataScript
 );
 
 // Write Form.html (just the widget content)
