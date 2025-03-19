@@ -5,14 +5,14 @@
   "targets": {
     "react-static": {
       "source": "src/Form.tsx",
-      "context": "react-server",
-      "distDir": "./public"
+      "context": "react-server"
     }
   },
   "scripts": {
-    "start": "parcel",
     "clean": "rm -rf public",
-    "build": "yarn clean && parcel build --no-content-hash"
+    "build": "yarn clean && parcel build --target react-static --no-content-hash --dist-dir public --public-url https://p6l-richard.github.io/examples-1/form-static/public",
+    "postbuild": "node scripts/split-output.js",
+    "start": "parcel"
   },
   "dependencies": {
     "@parcel/rsc": "^2.14.0",
