@@ -5,10 +5,24 @@ const path = require('path');
 const htmlPath = path.join(__dirname, '../public/Form.html');
 const html = fs.readFileSync(htmlPath, 'utf8');
 
+// Save original file
+fs.writeFileSync(
+  path.join(__dirname, '../public/Form.html.original'),
+  html
+);
+
 // Extract parts using regex
 const headLinks = html.match(/<link[^>]*>/g) || [];
 const bodyScripts = html.match(/<script[\s\S]*?<\/script>/g) || [];
-const divContent = html.match(/<div class="form-widget"[\s\S]*?<\/div>/i)?.[0] || '';
+
+// Extract the form widget content with all its children
+const formMatch = html.match(/<div class="form-widget"[\s\S]*?<form[\s\S]*?<\/form>[\s\S]*?<\/div>[\s\S]*?<\/div>/);
+const divContent = formMatch ? formMatch[0] : '';
+
+// Fix script URLs
+const fixedBodyScripts = bodyScripts.map(script => 
+  script.replace(/publicForm/g, 'public/Form')
+);
 
 // Write head.html
 fs.writeFileSync(
@@ -19,10 +33,10 @@ fs.writeFileSync(
 // Write body.html
 fs.writeFileSync(
   path.join(__dirname, '../public/body.html'),
-  bodyScripts.join('\n')
+  fixedBodyScripts.join('\n')
 );
 
-// Overwrite Form.html (just the widget content)
+// Write Form.html (just the widget content)
 fs.writeFileSync(
   path.join(__dirname, '../public/Form.html'), 
   divContent
