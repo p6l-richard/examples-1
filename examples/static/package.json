@@ -16,5 +16,9 @@
     "@parcel/rsc": "^2.14.0",
     "react": "canary",
     "react-dom": "canary"
+  },
+  "devDependencies": {
+    "@parcel/packager-react-static": "2.14.1",
+    "@parcel/transformer-react-static": "2.14.1"
   }
 }

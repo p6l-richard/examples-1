@@ -1,0 +1,28 @@
+{
+  "name": "form-static",
+  "version": "1.0.0",
+  "private": true,
+  "targets": {
+    "react-static": {
+      "source": "src/pages/*.tsx",
+      "context": "react-server"
+    }
+  },
+  "scripts": {
+    "start": "parcel",
+    "build": "parcel build"
+  },
+  "dependencies": {
+    "@parcel/rsc": "2.14.1",
+    "motion": "^12.5.0",
+    "react": "19.1.0-canary-c69a5fc5-20250318",
+    "react-dom": "19.1.0-canary-c69a5fc5-20250318"
+  },
+  "devDependencies": {
+    "@parcel/packager-react-static": "2.14.1",
+    "@parcel/transformer-react-static": "2.14.1",
+    "@types/react": "^18.2.61",
+    "@types/react-dom": "^18.2.19",
+    "typescript": "^5.0.0"
+  }
+}
